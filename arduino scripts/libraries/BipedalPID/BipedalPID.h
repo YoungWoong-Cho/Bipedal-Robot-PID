@@ -9,12 +9,13 @@ private:
 	double kp, ki, kd; // PID gains
 	double e; // Error
 	double p, i, d; // PID values
+	double r; // Reference value or Setpoint
 
 	// Serial communication
 	double current_time, previous_time, dt;
 	char singleChar;
-	char command[10];
 	short cmd_index{ 0 };
+	char command[10];
 public:
 	// Constructor
 	BipedalPID();
@@ -24,10 +25,11 @@ public:
 	void set_kp(double new_kp);
 	void set_ki(double new_ki);
 	void set_kd(double new_kd);
+	void set_r(double new_r);
 
 	// Serial communication
 	void read_cmd();
-	double get_val(char cmd[10]);
+	double get_val(char command[10]);
 	void process_cmd();
 
 	// Run

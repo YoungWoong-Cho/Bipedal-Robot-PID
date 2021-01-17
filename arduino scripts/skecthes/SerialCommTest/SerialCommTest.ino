@@ -1,6 +1,8 @@
 #include "BipedalPID.h"
 
-BipedalPID obj;
+BipedalPID* robot;
 
-void setup(){Serial.begin(9600);  }
-void loop(){obj.run();}
+void setup(){robot = new BipedalPID(0, 0, 0);}
+void loop(){
+  robot->run();
+}

@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\arduino scripts",
+    "\\arduino scripts\\libraries",
+    "\\arduino scripts\\libraries\\BipedalPID",
+    "\\arduino scripts\\skecthes",
+    "\\arduino scripts\\skecthes\\SerialCommTest"
+  ],
+  "SelectedNode": "\\arduino scripts\\skecthes\\SerialCommTest\\SerialCommTest.ino",
+  "PreviewInSolutionExplorer": false
+}
