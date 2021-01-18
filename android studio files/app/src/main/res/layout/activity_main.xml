@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:hint="Type Serial Command here"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
@@ -37,7 +37,7 @@
         android:text="Send Serial"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintTop_toBottomOf="@+id/etSerial"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
@@ -50,7 +50,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:backgroundTint="@color/teal_700"
         app:layout_constraintTop_toBottomOf="@+id/btnSend"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
@@ -59,7 +59,7 @@
         android:id="@+id/myName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="Made by YoungWoong Cho"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -68,17 +68,29 @@
 
     <TextView
         android:id="@+id/howToUse"
-        android:layout_width="350dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="How to use:\n\n1. Connect to the arduino using bluetooth\n2.Send serial command according to following protocol:\n\ta) P : Get current k_p\n\t\ta-1) P2.5 : Set kp to 2.5\n\tb) I : Get current k_o\n\t\tb-1) I0.5 : Set ki to 0.5\n\tc) D : Get current k_d\n\t\tc-1) D10.0 : Set kd to 10.0\n\t d) R12 : Set reference point to 12"
+        android:text="How to use:\n1. Connect to the Arduino using bluetooth.\n2. Send serial command according to the following protocol:\n\ta) Send 'P' to get current k_p\n\t\ta-1) Send 'P2.5' to set k_p to 2.5\n\tb) Send I to get current k_i\n\t\tb-1) Send 'I0.5' to set k_i to 0.5\n\tc) Send D to get current k_d\n\t\tc-1) Send 'D10.0' to set k_d to 10.0"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintTop_toBottomOf="@+id/myName"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+    <TextView
+        android:id="@+id/tvSensorOrientation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pitch angle will be displayed here"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toTopOf="@+id/imgView"
+        android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
 
     <ImageView
+        android:id="@+id/imgView"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/robot"

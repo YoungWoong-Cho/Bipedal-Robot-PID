@@ -2,27 +2,48 @@ package com.example.bipedalpid;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
 import app.akexorcist.bluetotohspp.library.DeviceList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener{
 
     private BluetoothSPP bt;
 
-    Button btnConnect; //연결시도
-    Button btnSend; //데이터 전송
-    EditText etSerial;
+    private Button btnConnect; //연결시도
+    private Button btnSend; //데이터 전송
+    private EditText etSerial;
+    private TextView tvSensorOrientation;
+
+    private float[] mR = new float[9];
+    private float[] mOrientation = new float[3];
+
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private Sensor mMagnetometer;
+    private float[] mLastAccelerometer = new float[3];
+    private float[] mLastMagnetometer = new float[3];
+    private boolean mLastAccelerometerSet = false;
+    private boolean mLastMagnetometerSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
         btnConnect = findViewById(R.id.btnConnect); //연결시도
         btnSend = findViewById(R.id.btnSend); //데이터 전송
         etSerial = findViewById(R.id.etSerial);
+        tvSensorOrientation = findViewById(R.id.tvSensorOrientation);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
         bt = new BluetoothSPP(this); //Initializing
 
@@ -80,6 +106,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener( this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mSensorManager.unregisterListener( this, mAccelerometer);
+        mSensorManager.unregisterListener( this, mMagnetometer);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event){
+        if(event.sensor == mAccelerometer) {
+            System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
+            mLastAccelerometerSet = true;
+        }
+        else if(event.sensor == mMagnetometer) {
+            System.arraycopy(event.values, 0, mLastMagnetometer, 0, event.values.length);
+            mLastMagnetometerSet = true;
+        }
+        if (mLastAccelerometerSet && mLastMagnetometerSet){
+            mSensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
+            //float pitch = (int)(Math.toDegrees(mSensorManager.getOrientation(mR, mOrientation)[1]) + 360) % 360;
+            float[] newR = {mR[0], mR[2], -mR[1], mR[3], mR[5], -mR[4], mR[6], mR[8], -mR[7]};
+            double pitch = -(int)(Math.toDegrees(mSensorManager.getOrientation(newR, mOrientation)[1])*100)/100.0;
+            tvSensorOrientation.setText("PITCH: " + Double.toString(pitch) + " degrees");
+            bt.send("R"+pitch, true);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy){}
 
     public void onDestroy() {
         super.onDestroy();

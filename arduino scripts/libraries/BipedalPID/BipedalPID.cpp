@@ -56,7 +56,7 @@ void BipedalPID::process_cmd() {
 		if (command[1] == '\0') { Serial.print("kp: "); Serial.println(kp); }
 		else{
 			double new_kp = get_val(command);
-			Serial.print("Changing kp into "); Serial.println(new_kp);
+			Serial.print("Changing kp to "); Serial.println(new_kp);
 			set_kp(new_kp);
 		}
 	}
@@ -64,7 +64,7 @@ void BipedalPID::process_cmd() {
 		if (command[1] == '\0') { Serial.print("ki: "); Serial.println(ki); }
 		else{
 			double new_ki = get_val(command);
-			Serial.print("Changing ki into "); Serial.println(new_ki);
+			Serial.print("Changing ki to "); Serial.println(new_ki);
 			set_ki(new_ki);
 		}
 	}
@@ -72,7 +72,7 @@ void BipedalPID::process_cmd() {
 		if (command[1] == '\0') { Serial.print("kd: "); Serial.println(kd); }
 		else{
 			double new_kd = get_val(command);
-			Serial.print("Changing kd into "); Serial.println(new_kd);
+			Serial.print("Changing kd to "); Serial.println(new_kd);
 			set_kd(new_kd);
 		}
 	}
@@ -80,7 +80,7 @@ void BipedalPID::process_cmd() {
 		if (command[1] == '\0') { Serial.print("R: "); Serial.println(r); }
 		else{
 			double new_r = get_val(command);
-			Serial.print("Changing R into "); Serial.println(new_r);
+			Serial.print("Changing R to "); Serial.println(new_r);
 			set_r(new_r);
 		}
 	}
