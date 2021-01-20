@@ -7,9 +7,10 @@ class BipedalPID {
 private:
 	// PID
 	double kp, ki, kd; // PID gains
-	double e; // Error
-	double p, i, d; // PID values
+	double e, previous_e, de; // Error
+	double p, i, d, pid; // PID values
 	double r; // Reference value or Setpoint
+	double y;
 
 	// Serial communication
 	double current_time, previous_time, dt;
@@ -31,6 +32,9 @@ public:
 	void read_cmd();
 	double get_val(char command[10]);
 	void process_cmd();
+
+	// PID calculation
+	void update_PID();
 
 	// Run
 	void run();
