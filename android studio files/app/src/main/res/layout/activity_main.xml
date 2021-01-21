@@ -77,6 +77,25 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
+    <Switch
+        android:id="@+id/toggleSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/howToUse"
+        app:layout_constraintLeft_toRightOf="@id/toggleText"
+        android:layout_marginLeft="10dp"
+    />
+    <TextView
+        android:id="@+id/toggleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/howToUse"
+        android:layout_marginTop="5dp"
+        android:text="Use phone's pitch angle as reference angle?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="10dp"
+    />
     <TextView
         android:id="@+id/tvSensorOrientation"
         android:layout_width="wrap_content"

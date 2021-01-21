@@ -15,7 +15,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button btnSend; //데이터 전송
     private EditText etSerial;
     private TextView tvSensorOrientation;
+    private Switch toggleSwitch;
 
     private float[] mR = new float[9];
     private float[] mOrientation = new float[3];
@@ -44,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] mLastMagnetometer = new float[3];
     private boolean mLastAccelerometerSet = false;
     private boolean mLastMagnetometerSet = false;
+
+    private boolean readBt = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnSend = findViewById(R.id.btnSend); //데이터 전송
         etSerial = findViewById(R.id.etSerial);
         tvSensorOrientation = findViewById(R.id.tvSensorOrientation);
+        toggleSwitch = findViewById(R.id.toggleSwitch);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -105,6 +111,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
         });
+
+        toggleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                {
+                    readBt = true;
+                }
+                else
+                {
+                    readBt = false;
+                }
+            }
+        });
     }
 
     @Override
@@ -123,21 +143,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event){
-        if(event.sensor == mAccelerometer) {
-            System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
-            mLastAccelerometerSet = true;
-        }
-        else if(event.sensor == mMagnetometer) {
-            System.arraycopy(event.values, 0, mLastMagnetometer, 0, event.values.length);
-            mLastMagnetometerSet = true;
-        }
-        if (mLastAccelerometerSet && mLastMagnetometerSet){
-            mSensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
-            //float pitch = (int)(Math.toDegrees(mSensorManager.getOrientation(mR, mOrientation)[1]) + 360) % 360;
-            float[] newR = {mR[0], mR[2], -mR[1], mR[3], mR[5], -mR[4], mR[6], mR[8], -mR[7]};
-            double pitch = -(int)(Math.toDegrees(mSensorManager.getOrientation(newR, mOrientation)[1])*100)/100.0;
-            tvSensorOrientation.setText("PITCH: " + Double.toString(pitch) + " degrees");
-            bt.send("R"+pitch, true);
+        if (readBt) {
+            if (event.sensor == mAccelerometer) {
+                System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
+                mLastAccelerometerSet = true;
+            } else if (event.sensor == mMagnetometer) {
+                System.arraycopy(event.values, 0, mLastMagnetometer, 0, event.values.length);
+                mLastMagnetometerSet = true;
+            }
+            if (mLastAccelerometerSet && mLastMagnetometerSet) {
+                mSensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
+                //float pitch = (int)(Math.toDegrees(mSensorManager.getOrientation(mR, mOrientation)[1]) + 360) % 360;
+                float[] newR = {mR[0], mR[2], -mR[1], mR[3], mR[5], -mR[4], mR[6], mR[8], -mR[7]};
+                double pitch = -(int) (Math.toDegrees(mSensorManager.getOrientation(newR, mOrientation)[1]) * 100) / 100.0;
+                tvSensorOrientation.setText("PITCH: " + Double.toString(pitch) + " degrees");
+                bt.send("R" + pitch, true);
+            }
         }
     }
 

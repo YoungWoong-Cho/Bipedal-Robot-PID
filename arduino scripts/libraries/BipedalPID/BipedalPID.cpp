@@ -71,6 +71,10 @@ void BipedalPID::read_cmd() {
 			cmd_index++;
 		}
 	}
+	else
+	{
+		update_PID();
+	}
 }
 
 // Return the value that comes after the keyword
@@ -143,7 +147,7 @@ void BipedalPID::update_PID(){
   d = kd * de/dt;
   pid = (p + i + d) * 255/30;
 
-	Serial.print(dt); Serial.print(" R: "); Serial.print(r); Serial.print(" Y: "); Serial.print(y); Serial.print(" E: "); Serial.print(e); Serial.print(" PID: "); Serial.println(pid);
+	Serial.print(" R: "); Serial.print(r); Serial.print(" Y: "); Serial.print(y); Serial.print(" E: "); Serial.print(e); Serial.print(" PID: "); Serial.println(pid);
 
 	if (pid > 0){
     digitalWrite(MOTOR_A1, HIGH);
