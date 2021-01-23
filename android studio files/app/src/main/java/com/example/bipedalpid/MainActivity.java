@@ -29,12 +29,20 @@ import app.akexorcist.bluetotohspp.library.DeviceList;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
 
+    private double kp = 0.0;
+    private double ki = 0.0;
+    private double kd = 0.0;
+
     private BluetoothSPP bt;
 
     private Button btnConnect; //연결시도
     private Button btnSend; //데이터 전송
+    private Button btnPIDReset;
     private EditText etSerial;
     private TextView tvSensorOrientation;
+    private TextView tvP;
+    private TextView tvI;
+    private TextView tvD;
     private Switch toggleSwitch;
 
     private float[] mR = new float[9];
@@ -60,8 +68,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         btnConnect = findViewById(R.id.btnConnect); //연결시도
         btnSend = findViewById(R.id.btnSend); //데이터 전송
+        btnPIDReset = findViewById(R.id.btnPIDReset);
         etSerial = findViewById(R.id.etSerial);
         tvSensorOrientation = findViewById(R.id.tvSensorOrientation);
+        tvP = findViewById(R.id.tvP);
+        tvI = findViewById(R.id.tvI);
+        tvD = findViewById(R.id.tvD);
         toggleSwitch = findViewById(R.id.toggleSwitch);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -109,6 +121,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Intent intent = new Intent(getApplicationContext(), DeviceList.class);
                     startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
                 }
+            }
+        });
+
+        btnPIDReset.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                bt.send("P0.0"+'\n', true);
+                bt.send("I0.0"+'\n', true);
+                bt.send("D0.0"+'\n', true);
+                tvP.setText("KP0.0");
+                tvI.setText("KI0.0");
+                tvD.setText("KD0.0");
             }
         });
 
@@ -187,7 +210,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void setup() {
         btnSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                bt.send(etSerial.getText().toString()+'\n', true);
+                String msg = etSerial.getText().toString();
+                bt.send(msg+'\n', true);
+
+                if (msg.charAt(0) == 'P'){
+                    tvP.setText("K"+msg);
+                }
+                else if (msg.charAt(0) == 'I'){
+                    tvI.setText("K"+msg);
+                }
+                else if (msg.charAt(0) == 'D'){
+                    tvD.setText("K"+msg);
+                }
+
+                etSerial.setText("");
             }
         });
     }

@@ -32,7 +32,7 @@ float r = 73.2; // Desired angle
 MPU6050 mpu6050(Wire);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Wire.begin();
   //Wire.setClock(50000);
   mpu6050.begin();

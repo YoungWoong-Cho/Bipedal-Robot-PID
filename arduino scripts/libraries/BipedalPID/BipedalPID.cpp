@@ -3,14 +3,14 @@
 #include <MPU6050.h>
 #include <Wire.h>
 #include "BipedalPID.h"
-#define RX 2
-#define TX 3
-#define MOTOR_A1 4
-#define MOTOR_A2 5
-#define MOTOR_B1 6
-#define MOTOR_B2 7
-#define PWM_A 8
-#define PWM_B 9
+#define RX 6
+#define TX 7
+#define MOTOR_A_DIR 12
+#define MOTOR_A_BRK 9
+#define MOTOR_B_DIR 13
+#define MOTOR_B_BRK 8
+#define PWM_A 3
+#define PWM_B 11
 
 MPU6050 mpu6050(Wire);
 SoftwareSerial bluetooth(TX, RX);
@@ -20,14 +20,15 @@ BipedalPID::BipedalPID() {
   bluetooth.begin(9600);
 	Wire.begin();
 	mpu6050.begin();
+	mpu6050.calcGyroOffsets(true);
 
 	//Setup Channel A
-  pinMode(MOTOR_A1, OUTPUT); //Initiates Motor Channel A pin
-  pinMode(MOTOR_A2, OUTPUT); //Initiates Motor Channel A pin
+  pinMode(MOTOR_A_DIR, OUTPUT); //Initiates Motor Channel A pin
+  pinMode(MOTOR_A_BRK, OUTPUT); //Initiates Motor Channel A pin
 
   //Setup Channel B
-  pinMode(MOTOR_B1, OUTPUT); //Initiates Motor Channel B pin
-  pinMode(MOTOR_B2, OUTPUT);  //Initiates Motor Channel B pin
+  pinMode(MOTOR_B_DIR, OUTPUT); //Initiates Motor Channel B pin
+  pinMode(MOTOR_B_BRK, OUTPUT);  //Initiates Motor Channel B pin
 
 	previous_time = millis()/1000.0; // [s]
 	p = i = d = 0;
@@ -37,14 +38,15 @@ BipedalPID::BipedalPID(double kp, double ki, double kd) : kp(kp), ki(ki), kd(kd)
   bluetooth.begin(9600);
 	Wire.begin();
 	mpu6050.begin();
+	mpu6050.calcGyroOffsets(true);
 
 	//Setup Channel A
-  pinMode(MOTOR_A1, OUTPUT); //Initiates Motor Channel A pin
-  pinMode(MOTOR_A2, OUTPUT); //Initiates Motor Channel A pin
+  pinMode(MOTOR_A_DIR, OUTPUT); //Initiates Motor Channel A pin
+  pinMode(MOTOR_A_BRK, OUTPUT); //Initiates Motor Channel A pin
 
   //Setup Channel B
-  pinMode(MOTOR_B1, OUTPUT); //Initiates Motor Channel B pin
-  pinMode(MOTOR_B2, OUTPUT);  //Initiates Motor Channel B pin
+  pinMode(MOTOR_B_DIR, OUTPUT); //Initiates Motor Channel B pin
+  pinMode(MOTOR_B_BRK, OUTPUT);  //Initiates Motor Channel B pin
 
 	previous_time = millis()/1000.0; // [s]
 	p = i = d = 0;
@@ -150,19 +152,19 @@ void BipedalPID::update_PID(){
 	Serial.print(" R: "); Serial.print(r); Serial.print(" Y: "); Serial.print(y); Serial.print(" E: "); Serial.print(e); Serial.print(" PID: "); Serial.println(pid);
 
 	if (pid > 0){
-    digitalWrite(MOTOR_A1, HIGH);
-    digitalWrite(MOTOR_A2, LOW);
+    digitalWrite(MOTOR_A_DIR, HIGH);
+    digitalWrite(MOTOR_A_BRK, LOW);
     analogWrite(PWM_A, min(pid, 255));
-    digitalWrite(MOTOR_B1, HIGH);
-    digitalWrite(MOTOR_B2, LOW);
+    digitalWrite(MOTOR_B_DIR, HIGH);
+    digitalWrite(MOTOR_B_BRK, LOW);
     analogWrite(PWM_B, min(pid, 255));
   }
   else if (pid < 0){
-    digitalWrite(MOTOR_A1, LOW);
-    digitalWrite(MOTOR_A2, HIGH);
+    digitalWrite(MOTOR_A_DIR, LOW);
+    digitalWrite(MOTOR_A_BRK, LOW);
     analogWrite(PWM_A, min(-pid, 255));
-    digitalWrite(MOTOR_B1, LOW);
-    digitalWrite(MOTOR_B2, HIGH);
+    digitalWrite(MOTOR_B_DIR, LOW);
+    digitalWrite(MOTOR_B_BRK, LOW);
     analogWrite(PWM_B, min(-pid, 255));
   }
   previous_time = current_time;
